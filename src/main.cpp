@@ -15,6 +15,7 @@
 #include "GlobalNamespace/BeatmapLevelDataLoaderSO.hpp"
 #include "GlobalNamespace/BeatmapLevelLoader.hpp"
 #include "GlobalNamespace/BeatmapLevelsModel.hpp"
+#include "GlobalNamespace/CustomPreviewBeatmapLevel.hpp"
 #include "GlobalNamespace/HapticFeedbackController.hpp"
 #include "GlobalNamespace/IBeatmapDataAssetFileModel.hpp"
 #include "GlobalNamespace/IBeatmapLevel.hpp"
@@ -27,6 +28,7 @@
 #include "GlobalNamespace/NoteController.hpp"
 #include "GlobalNamespace/OVRInput.hpp"
 #include "GlobalNamespace/PlayerDataModel.hpp"
+#include "GlobalNamespace/RoomAdjustSettingsViewController.hpp"
 #include "GlobalNamespace/StandardLevelDetailView.hpp"
 #include "GlobalNamespace/StandardLevelDetailViewController.hpp"
 #include "HMUI/CurvedCanvasSettings.hpp"
@@ -93,7 +95,6 @@ using namespace il2cpp::utils;
 
 static ModInfo modInfo;  // Stores the ID and version of our mod, and is sent to
                          // the modloader upon startup
-
 // Loads the config from disk using our modInfo, then returns it for use
 Configuration &getConfig() {
   static Configuration config(modInfo);
@@ -184,9 +185,27 @@ std::string getReadableDate(std::string s) {
          to_utf8(csstrtostr(year));
 }
 
+custom_types::Helpers::Coroutine SongLoader() {
+  getLogger().info("[DiTails] started to load!");
+  while (!RuntimeSongLoader::API::HasLoadedSongs()) {
+    co_yield nullptr;
+  }
+  getLogger().info("[DiTails] loaded songs!");
+  co_return;
+}
+
 std::string id = "";
 bool loadedButton = false;
 
+MAKE_HOOK_MATCH(RoomAdjustSettingsViewController_DidActivate,
+                &GlobalNamespace::RoomAdjustSettingsViewController::DidActivate,
+                void, GlobalNamespace::RoomAdjustSettingsViewController *self,
+                bool firstActivation, bool addedToHeirarchy,
+                bool screenSystemEnabling) {
+  RoomAdjustSettingsViewController_DidActivate(
+      self, firstActivation, addedToHeirarchy, screenSystemEnabling);
+  loadedButton = false;
+}
 MAKE_HOOK_MATCH(
     StandardLevelDetailViewController_DidActivate,
     &GlobalNamespace::StandardLevelDetailViewController::DidActivate, void,
@@ -195,15 +214,28 @@ MAKE_HOOK_MATCH(
   StandardLevelDetailViewController_DidActivate(
       self, firstActivation, addedToHeirarchy, screenSystemEnabling);
 
+  if (!RuntimeSongLoader::API::HasLoadedSongs()) {
+    self->StartCoroutine(reinterpret_cast<System::Collections::IEnumerator *>(
+        custom_types::Helpers::CoroutineHelper::New(SongLoader())));
+  }
+
   /* Find beat map */
   auto difficulty = self->get_selectedDifficultyBeatmap();
 
-  if (!difficulty) return;
+  if (!difficulty) {
+    RuntimeSongLoader::API::RefreshSongs();
+    return;
+  }
 
   /* Get custom level songs */
   std::string hash = to_utf8(csstrtostr(getSongIDfromDifficulty(difficulty)));
 
-  if (!hash.starts_with("custom_level_")) return;
+  if (!hash.starts_with("custom_level_")) {
+    if (!loadedButton) {
+      loadedButton = false;
+    }
+    // return;
+  }
 
   hash = hash.substr(strlen("custom_level_"));
 
@@ -216,12 +248,9 @@ MAKE_HOOK_MATCH(
                                                difficulty](std::optional<
                                                            BeatSaver::Beatmap>
                                                                beatmap) {
+    if (!beatmap.has_value()) return;
     QuestUI::MainThreadScheduler::Schedule([self, beatmap] {
       if (!loadedButton) {
-        if (!beatmap) {
-          return;
-        }
-
         HMUI::ModalView *mapInfo = BeatSaberUI::CreateModal(
             self->get_transform(), UnityEngine::Vector2(120.0f, 60.0f),
             [](HMUI::ModalView *modal) {}, true);
@@ -249,7 +278,7 @@ MAKE_HOOK_MATCH(
             UnityEngine::Vector2(49.0f, -21.0f), Vector2(5.0f, 5.0f));
 
         HMUI::ModalView *beatsaverInfo = BeatSaberUI::CreateModal(
-            self->get_transform(), UnityEngine::Vector2(60.0f, 20.0f),
+            self->get_transform(), UnityEngine::Vector2(70.0f, 17.0f),
             [](HMUI::ModalView *modal) {}, true);
         UnityEngine::GameObject *beatsaverInfom =
             BeatSaberUI::CreateScrollableModalContainer(beatsaverInfo);
@@ -351,14 +380,11 @@ MAKE_HOOK_MATCH(
 
               BeatSaver::API::GetBeatmapByHashAsync(
                   hash, [beatsaverLink](std::optional<BeatSaver::Beatmap> m) {
-                    getLogger().info("test1");
+                    if (!m.has_value()) return;
                     QuestUI::MainThreadScheduler::Schedule([m, beatsaverLink] {
-                      getLogger().info("test2 %p\n", beatsaverLink);
-
                       beatsaverLink->SetText(il2cpp_utils::newcsstr(
                           "Link: https://beatsaver.com/maps/" +
                           m.value().GetId()));
-                      getLogger().info("test4");
                     });
                   });
             });
@@ -415,6 +441,7 @@ MAKE_HOOK_MATCH(
 
               BeatSaver::API::GetBeatmapByHashAsync(
                   hash, [descriptionText](std::optional<BeatSaver::Beatmap> m) {
+                    if (!m.has_value()) return;
                     QuestUI::MainThreadScheduler::Schedule([m,
                                                             descriptionText] {
                       descriptionText->SetText(
@@ -494,6 +521,7 @@ MAKE_HOOK_MATCH(
               BeatSaver::API::GetBeatmapByHashAsync(
                   hash, [key, author, mapper, uploaded, downloads, rating,
                          percent](std::optional<BeatSaver::Beatmap> m) {
+                    if (!m.has_value()) return;
                     QuestUI::MainThreadScheduler::Schedule([key, author, mapper,
                                                             uploaded, downloads,
                                                             rating, percent,
@@ -532,6 +560,8 @@ MAKE_HOOK_MATCH(
           components->get(i)->set_color(Color(0.0f, 0.0f, 0.0f, 0));
         }
 
+        button->set_name(il2cpp_utils::createcsstr("detailsButton"));
+
         std::string arrowPath =
             "/sdcard/ModData/com.beatgames.beatsaber/Mods/DiTails/Icons/"
             "arrow.png";
@@ -569,6 +599,7 @@ extern "C" void load() {
 
   getLogger().info("Installing hooks...");
   INSTALL_HOOK(getLogger(), StandardLevelDetailViewController_DidActivate);
+  INSTALL_HOOK(getLogger(), RoomAdjustSettingsViewController_DidActivate);
   getLogger().info("Installed all hooks!");
 
   custom_types::Register::AutoRegister();
