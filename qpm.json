@@ -33,6 +33,16 @@
       "id": "songdownloader",
       "versionRange": "*",
       "additionalData": {}
+    },
+    {
+      "id": "config-utils",
+      "versionRange": "*",
+      "additionalData": {}
+    },
+    {
+      "id": "songloader",
+      "versionRange": "*",
+      "additionalData": {}
     }
   ],
   "additionalData": {}

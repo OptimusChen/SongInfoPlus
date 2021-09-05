@@ -5,12 +5,27 @@
     "author": "OptimusChen",
     "version": "0.1.0",
     "packageId": "com.beatgames.beatsaber",
-    "packageVersion": "1.15.0",
+    "packageVersion": "1.17.0",
+    "coverImage": "logo.png",
     "description": "View extra song info by clicking the cover art",
     "modFiles": [
         "libDiTails.so"
     ],
     "libraryFiles": [
         "libbeatsaber-hook_2_2_5.so"
+    ],
+    "fileCopies": [
+        {
+          "name": "logo.png",
+          "destination": "/sdcard/ModData/com.beatgames.beatsaber/Mods/DiTails/Icons/logo.png"
+        },
+        {
+            "name": "arrow.png",
+            "destination": "/sdcard/ModData/com.beatgames.beatsaber/Mods/DiTails/Icons/arrow.png"
+          },
+          {
+            "name": "arrow_down.png",
+            "destination": "/sdcard/ModData/com.beatgames.beatsaber/Mods/DiTails/Icons/arrow_down.png"
+          }
     ]
 }
