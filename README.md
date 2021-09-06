@@ -2,6 +2,10 @@
 
 View extra song info by clicking the cover art
 
+Preview:
+  
+  <img src="preview.jpg" alt="preview" width="720" height="420">
+
 ## Credits
 
 * [zoller27osu](https://github.com/zoller27osu), [Sc2ad](https://github.com/Sc2ad) and [jakibaki](https://github.com/jakibaki) - [beatsaber-hook](https://github.com/sc2ad/beatsaber-hook)
