@@ -2,8 +2,8 @@
   "sharedDir": "shared",
   "dependenciesDir": "extern",
   "info": {
-    "name": "DiTails",
-    "id": "DiTails",
+    "name": "SongInfoPlus",
+    "id": "SongInfoPlus",
     "version": "0.1.0",
     "url": null,
     "additionalData": {}

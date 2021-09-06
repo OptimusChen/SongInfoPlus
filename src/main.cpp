@@ -185,15 +185,6 @@ std::string getReadableDate(std::string s) {
          to_utf8(csstrtostr(year));
 }
 
-custom_types::Helpers::Coroutine SongLoader() {
-  getLogger().info("[DiTails] started to load!");
-  while (!RuntimeSongLoader::API::HasLoadedSongs()) {
-    co_yield nullptr;
-  }
-  getLogger().info("[DiTails] loaded songs!");
-  co_return;
-}
-
 std::string id = "";
 bool loadedButton = false;
 
@@ -213,11 +204,6 @@ MAKE_HOOK_MATCH(
     bool firstActivation, bool addedToHeirarchy, bool screenSystemEnabling) {
   StandardLevelDetailViewController_DidActivate(
       self, firstActivation, addedToHeirarchy, screenSystemEnabling);
-
-  if (!RuntimeSongLoader::API::HasLoadedSongs()) {
-    self->StartCoroutine(reinterpret_cast<System::Collections::IEnumerator *>(
-        custom_types::Helpers::CoroutineHelper::New(SongLoader())));
-  }
 
   /* Find beat map */
   auto difficulty = self->get_selectedDifficultyBeatmap();
@@ -258,7 +244,7 @@ MAKE_HOOK_MATCH(
             BeatSaberUI::CreateScrollableModalContainer(mapInfo);
 
         std::string path =
-            "/sdcard/ModData/com.beatgames.beatsaber/Mods/DiTails/Icons/"
+            "/sdcard/ModData/com.beatgames.beatsaber/Mods/SongInfoPlus/Icons/"
             "logo.png";
         auto sprite = QuestUI::BeatSaberUI::FileToSprite(path);
 
@@ -563,10 +549,10 @@ MAKE_HOOK_MATCH(
         button->set_name(il2cpp_utils::createcsstr("detailsButton"));
 
         std::string arrowPath =
-            "/sdcard/ModData/com.beatgames.beatsaber/Mods/DiTails/Icons/"
+            "/sdcard/ModData/com.beatgames.beatsaber/Mods/SongInfoPlus/Icons/"
             "arrow.png";
         std::string arrowDownPath =
-            "/sdcard/ModData/com.beatgames.beatsaber/Mods/DiTails/Icons/"
+            "/sdcard/ModData/com.beatgames.beatsaber/Mods/SongInfoPlus/Icons/"
             "arrow_down.png";
         auto arrow = QuestUI::BeatSaberUI::FileToSprite(arrowPath);
         auto arrowDown = QuestUI::BeatSaberUI::FileToSprite(arrowDownPath);

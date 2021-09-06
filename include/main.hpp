@@ -1,11 +1,5 @@
 #pragma once
 
-#include "GlobalNamespace/CustomPreviewBeatmapLevel.hpp"
-#include "UnityEngine/MonoBehaviour.hpp"
-#include "custom-types/shared/coroutine.hpp"
-#include "custom-types/shared/macros.hpp"
-#include "custom-types/shared/types.hpp"
-
 // Include the modloader header, which allows us to tell the modloader which mod
 // this is, and the version etc.
 #include "modloader/shared/modloader.hpp"

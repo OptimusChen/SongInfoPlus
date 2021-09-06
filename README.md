@@ -1,4 +1,4 @@
-# DiTails
+# SongInfoPlus
 
 View extra song info by clicking the cover art
 
