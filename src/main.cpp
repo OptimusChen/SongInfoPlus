@@ -1,49 +1,20 @@
 #include "main.hpp"
 
-#include <stdio.h>
-
-#include <iostream>
-#include <string>
-
-#include "GlobalNameSpace/PreviewBeatmapLevelSO.hpp"
-#include "GlobalNamespace/BeatmapCharacteristicSO.hpp"
-#include "GlobalNamespace/BeatmapCharacteristicSegmentedControlController.hpp"
-#include "GlobalNamespace/BeatmapData.hpp"
-#include "GlobalNamespace/BeatmapDifficulty.hpp"
-#include "GlobalNamespace/BeatmapDifficultySegmentedControlController.hpp"
-#include "GlobalNamespace/BeatmapLevelDataExtensions.hpp"
-#include "GlobalNamespace/BeatmapLevelDataLoaderSO.hpp"
-#include "GlobalNamespace/BeatmapLevelLoader.hpp"
-#include "GlobalNamespace/BeatmapLevelsModel.hpp"
-#include "GlobalNamespace/CustomPreviewBeatmapLevel.hpp"
-#include "GlobalNamespace/HapticFeedbackController.hpp"
-#include "GlobalNamespace/IBeatmapDataAssetFileModel.hpp"
 #include "GlobalNamespace/IBeatmapLevel.hpp"
 #include "GlobalNamespace/IBeatmapLevelData.hpp"
 #include "GlobalNamespace/IDifficultyBeatmap.hpp"
-#include "GlobalNamespace/IDifficultyBeatmapSet.hpp"
 #include "GlobalNamespace/IPreviewBeatmapLevel.hpp"
-#include "GlobalNamespace/LevelCollectionTableView.hpp"
-#include "GlobalNamespace/LoadingControl.hpp"
-#include "GlobalNamespace/NoteController.hpp"
-#include "GlobalNamespace/OVRInput.hpp"
-#include "GlobalNamespace/PlayerDataModel.hpp"
 #include "GlobalNamespace/RoomAdjustSettingsViewController.hpp"
-#include "GlobalNamespace/StandardLevelDetailView.hpp"
+#include "GlobalNamespace/SharedCoroutineStarter.hpp"
 #include "GlobalNamespace/StandardLevelDetailViewController.hpp"
 #include "HMUI/CurvedCanvasSettings.hpp"
 #include "HMUI/CurvedTextMeshPro.hpp"
 #include "HMUI/ImageView.hpp"
 #include "HMUI/ModalView.hpp"
-#include "HMUI/ScrollView.hpp"
-#include "HMUI/TableView.hpp"
-#include "HMUI/Touchable.hpp"
-#include "HMUI/ViewController.hpp"
 #include "System/Collections/IEnumerator.hpp"
 #include "TMPro/TextMeshProUGUI.hpp"
 #include "UnityEngine/Color.hpp"
 #include "UnityEngine/GameObject.hpp"
-#include "UnityEngine/RectOffset.hpp"
 #include "UnityEngine/RectTransform.hpp"
 #include "UnityEngine/Transform.hpp"
 #include "UnityEngine/Vector2.hpp"
@@ -56,12 +27,9 @@
 #include "custom-types/shared/register.hpp"
 #include "custom-types/shared/types.hpp"
 #include "questui/shared/BeatSaberUI.hpp"
-#include "questui/shared/CustomTypes/Components/Backgroundable.hpp"
-#include "questui/shared/CustomTypes/Components/FloatingScreen/FloatingScreen.hpp"
 #include "questui/shared/CustomTypes/Components/MainThreadScheduler.hpp"
 #include "questui/shared/QuestUI.hpp"
 #include "songdownloader/shared/BeatSaverAPI.hpp"
-#include "songdownloader/shared/Exceptions.hpp"
 #include "songloader/shared/API.hpp"
 
 #define UTILS_FUNCTIONS_H
@@ -71,15 +39,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <ctime>
+#include <iostream>
 #include <string>
 #include <string_view>
 #include <vector>
 
-#include "custom-types/shared/register.hpp"
-
 using namespace custom_types;
-
 using namespace std;
 using namespace HMUI;
 using namespace GlobalNamespace;
@@ -88,8 +53,6 @@ using namespace QuestUI::BeatSaberUI;
 using namespace UnityEngine;
 using namespace BeatSaver;
 using namespace BeatSaver::API;
-using namespace BeastSaber;
-using namespace ScoreSaber;
 using namespace il2cpp;
 using namespace il2cpp::utils;
 
@@ -197,14 +160,8 @@ MAKE_HOOK_MATCH(RoomAdjustSettingsViewController_DidActivate,
       self, firstActivation, addedToHeirarchy, screenSystemEnabling);
   loadedButton = false;
 }
-MAKE_HOOK_MATCH(
-    StandardLevelDetailViewController_DidActivate,
-    &GlobalNamespace::StandardLevelDetailViewController::DidActivate, void,
-    GlobalNamespace::StandardLevelDetailViewController *self,
-    bool firstActivation, bool addedToHeirarchy, bool screenSystemEnabling) {
-  StandardLevelDetailViewController_DidActivate(
-      self, firstActivation, addedToHeirarchy, screenSystemEnabling);
 
+void doStuff(GlobalNamespace::StandardLevelDetailViewController *self) {
   /* Find beat map */
   auto difficulty = self->get_selectedDifficultyBeatmap();
 
@@ -220,7 +177,7 @@ MAKE_HOOK_MATCH(
     if (!loadedButton) {
       loadedButton = false;
     }
-    // return;
+    return;
   }
 
   hash = hash.substr(strlen("custom_level_"));
@@ -359,10 +316,16 @@ MAKE_HOOK_MATCH(
               std::string hash = to_utf8(csstrtostr(getSongIDfromDifficulty(
                   self->get_selectedDifficultyBeatmap())));
 
-              hash = hash.substr(13);
+              if (!hash.starts_with("custom_level_")) {
+                beatsaverLink->SetText(
+                    il2cpp_utils::newcsstr("Cannot load on OST or DLC Song!"));
+                return;
+              }
 
               beatsaverLink->SetText(il2cpp_utils::newcsstr(
                   "Link: https://beatsaver.com/maps/Loading..."));
+
+              hash = hash.substr(13);
 
               BeatSaver::API::GetBeatmapByHashAsync(
                   hash, [beatsaverLink](std::optional<BeatSaver::Beatmap> m) {
@@ -388,6 +351,11 @@ MAKE_HOOK_MATCH(
               hashInfo->Show(true, true, nullptr);
               std::string hash = to_utf8(csstrtostr(getSongIDfromDifficulty(
                   self->get_selectedDifficultyBeatmap())));
+              if (!hash.starts_with("custom_level_")) {
+                hashLink->SetText(
+                    il2cpp_utils::newcsstr("Cannot load on OST or DLC Songs!"));
+                return;
+              }
               hashLink->SetText(
                   il2cpp_utils::newcsstr("Hash: " + hash.substr(13)));
             });
@@ -409,6 +377,8 @@ MAKE_HOOK_MATCH(
                   self->get_selectedDifficultyBeatmap())));
 
               if (!hash.starts_with("custom_level_")) {
+                descriptionText->SetText(
+                    il2cpp_utils::newcsstr("Cannot load on OST or DLC songs!"));
                 return;
               }
 
@@ -482,6 +452,18 @@ MAKE_HOOK_MATCH(
                   self->get_selectedDifficultyBeatmap())));
 
               if (!hash.starts_with("custom_level_")) {
+                key->SetText(
+                    il2cpp_utils::newcsstr("Key : Must be custom level"));
+                author->SetText(
+                    il2cpp_utils::newcsstr("Author : Must be custom level"));
+                mapper->SetText(
+                    il2cpp_utils::newcsstr("Mapper : Must be custom level"));
+                uploaded->SetText(
+                    il2cpp_utils::newcsstr("Uploaded : Must be custom level"));
+                downloads->SetText(
+                    il2cpp_utils::newcsstr("Downloads : Must be custom level"));
+                rating->SetText(il2cpp_utils::newcsstr("0"));
+                percent->SetText(il2cpp_utils::newcsstr("0"));
                 return;
               }
 
@@ -576,6 +558,28 @@ MAKE_HOOK_MATCH(
       }
     });
   });
+}
+
+custom_types::Helpers::Coroutine waitForSongLoader(
+    GlobalNamespace::StandardLevelDetailViewController *self) {
+  co_yield reinterpret_cast<System::Collections::IEnumerator *>(
+      CRASH_UNLESS(WaitForSeconds::New_ctor(0.2)));
+  doStuff(self);
+  co_return;
+}
+
+MAKE_HOOK_MATCH(
+    StandardLevelDetailViewController_DidActivate,
+    &GlobalNamespace::StandardLevelDetailViewController::DidActivate, void,
+    GlobalNamespace::StandardLevelDetailViewController *self,
+    bool firstActivation, bool addedToHeirarchy, bool screenSystemEnabling) {
+  StandardLevelDetailViewController_DidActivate(
+      self, firstActivation, addedToHeirarchy, screenSystemEnabling);
+
+  GlobalNamespace::SharedCoroutineStarter::get_instance()->StartCoroutine(
+      reinterpret_cast<custom_types::Helpers::enumeratorT *>(
+          custom_types::Helpers::CoroutineHelper::New(
+              waitForSongLoader(self))));
 }
 
 // Called later on in the game loading - a good time to install function hooks
