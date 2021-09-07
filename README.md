@@ -1,6 +1,6 @@
 # SongInfoPlus
 
-View extra song info by clicking the cover art. Port of the PC mod [DiTails](https://github.com/Auros/DiTails) by [Auros](https://github.com/Auros)
+View extra song info by clicking the cover art.
 
 Preview:
   
