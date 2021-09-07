@@ -17,6 +17,7 @@
 #include "UnityEngine/GameObject.hpp"
 #include "UnityEngine/RectTransform.hpp"
 #include "UnityEngine/Transform.hpp"
+#include "UnityEngine/UI/ContentSizeFitter.hpp"
 #include "UnityEngine/Vector2.hpp"
 #include "UnityEngine/Vector3.hpp"
 #include "UnityEngine/WaitForSeconds.hpp"
@@ -53,6 +54,7 @@ using namespace HMUI;
 using namespace GlobalNamespace;
 using namespace QuestUI;
 using namespace QuestUI::BeatSaberUI;
+using namespace UnityEngine;
 using namespace UnityEngine;
 using namespace BeatSaver;
 using namespace BeatSaver::API;
@@ -230,7 +232,6 @@ void buttonClick(ModalView *mapInfo, GameObject *mapInfom,
         });
       });
 }
-
 void renderButtonStuff(
     GlobalNamespace::StandardLevelDetailViewController *self) {
   /* Find beat map */
@@ -329,7 +330,6 @@ void renderButtonStuff(
                 [](HMUI::ModalView *modal) {}, true);
             UnityEngine::GameObject *hashInfom =
                 BeatSaberUI::CreateScrollableModalContainer(hashInfo);
-
             auto hashLink =
                 BeatSaberUI::CreateText(hashInfo->get_transform(), "Hash: 0000",
                                         false, Vector2(-6.5f, -2.5f));
@@ -344,6 +344,13 @@ void renderButtonStuff(
                 descInfo->get_transform(), beatmap.value().GetDescription(),
                 false, UnityEngine::Vector2(-70.0f, 35.0f),
                 UnityEngine::Vector2(5.0f, 5.0f));
+
+            // UnityEngine::UI::ContentSizeFitter *contentsizefitter =
+            //     descriptionText->get_gameObject()
+            //         ->AddComponent<UnityEngine::UI::ContentSizeFitter *>();
+
+            // contentsizefitter->set_verticalFit(10.0f);
+            // contentsizefitter->set_horizontalFit(10.0f);
 
             HMUI::ModalView *artInfo = BeatSaberUI::CreateModal(
                 self->get_transform(), UnityEngine::Vector2(120.0f, 80.0f),
@@ -500,7 +507,7 @@ void renderButtonStuff(
                         QuestUI::MainThreadScheduler::Schedule(
                             [m, descriptionText] {
                               descriptionText->SetText(il2cpp_utils::newcsstr(
-                                  m.value().GetDescription()));
+                                  (m.value().GetDescription())));
                             });
                       });
                 });
