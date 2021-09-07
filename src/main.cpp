@@ -6,6 +6,7 @@
 #include "GlobalNamespace/IPreviewBeatmapLevel.hpp"
 #include "GlobalNamespace/RoomAdjustSettingsViewController.hpp"
 #include "GlobalNamespace/SharedCoroutineStarter.hpp"
+#include "GlobalNamespace/StandardLevelDetailView.hpp"
 #include "GlobalNamespace/StandardLevelDetailViewController.hpp"
 #include "HMUI/CurvedCanvasSettings.hpp"
 #include "HMUI/CurvedTextMeshPro.hpp"
@@ -549,16 +550,31 @@ void renderButtonStuff(
               artComponents->get(i)->skew = 0.0f;
             }
 
+            auto playButtonTransform =
+                self->standardLevelDetailView->actionButton->get_transform();
+            auto rectTransform =
+                self->standardLevelDetailView->actionButton->get_transform()
+                    ->GetParent()
+                    ->GetParent()
+                    ->GetParent()
+                    ->get_gameObject()
+                    ->GetComponent<RectTransform *>();
+            rectTransform->set_localScale(UnityEngine::Vector3{1, 2, 1});
+            playButtonTransform->GetParent()->GetParent()->set_localScale(
+                Vector3{1, 0.5f, 1});
+            playButtonTransform->GetParent()->GetParent()->set_localPosition(
+                Vector3{0, 13.7f, 0});
+
             if (imageView->skew == 0.0f) {
               auto text = QuestUI::BeatSaberUI::CreateText(
-                  self->get_transform(), "S.I.P", false,
-                  UnityEngine::Vector2(-23.75f, 18.25f),
-                  UnityEngine::Vector2(10.0f, 12.0f));
+                  self->get_transform(), "Info ", false,
+                  UnityEngine::Vector2(-5.65f, 9.5f),
+                  UnityEngine::Vector2(45.0f, 6.0f));
 
               auto button = QuestUI::BeatSaberUI::CreateUIButton(
                   self->get_transform(), "",
-                  UnityEngine::Vector2(-25.65f, 21.15f),
-                  UnityEngine::Vector2(10.0f, 12.0f),
+                  UnityEngine::Vector2(-25.65f, 10.2f),
+                  UnityEngine::Vector2(15.0f, 9.4f),
                   [mapInfo, mapInfom, self, key, author, mapper, uploaded,
                    downloads, rating, percent]() {
                     buttonClick(mapInfo, mapInfom, self, key, author, mapper,
@@ -569,15 +585,11 @@ void renderButtonStuff(
                   button->GetComponentsInChildren<HMUI::ImageView *>();
 
               button->set_name(il2cpp_utils::newcsstr("detailsButton"));
-
-              for (int i = 0; i < components->get_Length(); i++) {
-                components->get(i)->skew = 0.0f;
-              }
             } else {
               auto button = QuestUI::BeatSaberUI::CreateUIButton(
                   self->get_transform(), "",
-                  UnityEngine::Vector2(-26.65f, 21.15f),
-                  UnityEngine::Vector2(15.1f, 17.0f),
+                  UnityEngine::Vector2(-26.65f, 10.2f),
+                  UnityEngine::Vector2(15.1f, 9.4f),
                   [mapInfo, mapInfom, self, key, author, mapper, uploaded,
                    downloads, rating, percent]() {
                     buttonClick(mapInfo, mapInfom, self, key, author, mapper,
@@ -591,6 +603,7 @@ void renderButtonStuff(
 
               for (int i = 0; i < components->get_Length(); i++) {
                 components->get(i)->set_color(Color(0.0f, 0.0f, 0.0f, 0));
+                components->get(i)->skew = 0.30f;
               }
             }
 
