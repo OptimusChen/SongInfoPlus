@@ -3,9 +3,9 @@
     "name": "SongInfoPlus",
     "id": "SongInfoPlus",
     "author": "OptimusChen",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "packageId": "com.beatgames.beatsaber",
-    "packageVersion": "1.17.0",
+    "packageVersion": "1.17.1",
     "description": "View extra song info by clicking the cover art",
     "modFiles": [
         "libSongInfoPlus.so"

@@ -36,8 +36,6 @@
 #include "songloader/shared/API.hpp"
 
 #define UTILS_FUNCTIONS_H
-#define MakeDelegate(DelegateType, varName) \
-  (il2cpp_utils::MakeDelegate<DelegateType>(classof(DelegateType), varName))
 
 #include <ctype.h>
 #include <math.h>
@@ -130,6 +128,7 @@ std::string getNumberEnd(std::string number) {
       number.ends_with("9"))
     return "th";
   if (number.ends_with("1")) return "st";
+  if (number.ends_with("12")) return "th";
   if (number.ends_with("2")) return "nd";
   if (number.ends_with("3")) return "rd";
   return "th";
@@ -567,7 +566,7 @@ void renderButtonStuff(
 
             if (imageView->skew == 0.0f) {
               auto text = QuestUI::BeatSaberUI::CreateText(
-                  self->get_transform(), "Info ", false,
+                  self->get_transform(), "Info ", true,
                   UnityEngine::Vector2(-5.65f, 9.5f),
                   UnityEngine::Vector2(45.0f, 6.0f));
 
