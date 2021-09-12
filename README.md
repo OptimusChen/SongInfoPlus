@@ -4,7 +4,7 @@ View extra song info by clicking the cover art.
 
 Preview:
   
-  <img src="preview.jpg" alt="preview" width="720" height="420">
+  <img src="preview.jpg" alt="preview" width="900" height="420">
 
 ## Credits
 
