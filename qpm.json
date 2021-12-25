@@ -3,30 +3,29 @@
   "dependenciesDir": "extern",
   "info": {
     "name": "SongInfoPlus",
-    "id": "SongInfoPlus",
-    "version": "1.0.2",
+    "id": "songinfoplus",
+    "version": "0.1.0",
     "url": null,
     "additionalData": {}
   },
   "dependencies": [
     {
       "id": "beatsaber-hook",
-      "versionRange": "*",
-      "additionalData": {}
-    },
-    {
-      "id": "codegen",
-      "versionRange": "*",
-      "additionalData": {}
+      "versionRange": "^2.0.0",
+      "additionalData": {
+        "extraFiles": [
+          "src/inline-hook"
+        ]
+      }
     },
     {
       "id": "questui",
-      "versionRange": "*",
+      "versionRange": "0.11.1",
       "additionalData": {}
     },
     {
       "id": "custom-types",
-      "versionRange": "*",
+      "versionRange": "0.12.7",
       "additionalData": {}
     },
     {
@@ -35,13 +34,8 @@
       "additionalData": {}
     },
     {
-      "id": "config-utils",
-      "versionRange": "*",
-      "additionalData": {}
-    },
-    {
-      "id": "songloader",
-      "versionRange": "*",
+      "id": "codegen",
+      "versionRange": "0.14.0",
       "additionalData": {}
     }
   ],

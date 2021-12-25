@@ -2,6 +2,7 @@
 
 // Include the modloader header, which allows us to tell the modloader which mod
 // this is, and the version etc.
+#include "beatsaber-hook/shared/utils/hooking.hpp"
 #include "modloader/shared/modloader.hpp"
 
 // beatsaber-hook is a modding framework that lets us call functions and fetch
@@ -15,3 +16,11 @@
 // information from other files
 Configuration& getConfig();
 Logger& getLogger();
+
+namespace SongInfoPlus {
+namespace Hooks {
+void StandardLevelDetailView();
+};
+
+void InstallHooks();
+};  // namespace SongInfoPlus

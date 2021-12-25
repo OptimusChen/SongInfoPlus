@@ -2,7 +2,7 @@
     "configurations": [
         {
             "defines": [
-                "ID=\"DiTails\"",
+                "ID=\"songinfoplus\"",
                 "VERSION=\"0.1.0\"",
                 "__GNUC__",
                 "__aarch64__"
@@ -12,9 +12,11 @@
                 "${workspaceFolder}/shared",
                 "${workspaceFolder}/include",
                 "${workspaceFolder}/extern/**",
+                "${workspaceFolder}/extern/codegen/include/GlobalNamespace/**",
                 "${workspaceFolder}/extern/libil2cpp/il2cpp/libil2cpp",
                 "C:/Users/derek/Downloads/android-ndk-r23-windows/android-ndk-r23/*",
-                "C:/Users/derek/Downloads/android-ndk-r23-windows/android-ndk-r23//**"
+                "C:/Users/derek/Downloads/android-ndk-r23-windows/android-ndk-r23//**",
+                "${workspaceFolder}/extern/codegen/include"
             ],
             "name": "Quest",
             "cStandard": "c11",

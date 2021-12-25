@@ -1,23 +1,20 @@
+
 {
     "_QPVersion": "0.1.1",
     "name": "SongInfoPlus",
-    "id": "SongInfoPlus",
-    "author": "OptimusChen",
-    "version": "1.0.2",
+    "id": "songinfoplus",
+    "author": "Optimus",
+    "version": "0.1.0",
     "packageId": "com.beatgames.beatsaber",
     "packageVersion": "1.17.1",
-    "description": "View extra song info by clicking the cover art",
+    "description": "View extra info about a map by clicking its cover art!",
     "modFiles": [
-        "libSongInfoPlus.so"
+        "libsonginfoplus.so"
     ],
     "libraryFiles": [
-        "libbeatsaber-hook_2_2_5.so"
+        "libbeatsaber-hook_2_3_2.so"
     ],
     "fileCopies": [
-        {
-          "name": "logo.png",
-          "destination": "/sdcard/ModData/com.beatgames.beatsaber/Mods/SongInfoPlus/Icons/logo.png"
-        },
         {
             "name": "arrow.png",
             "destination": "/sdcard/ModData/com.beatgames.beatsaber/Mods/SongInfoPlus/Icons/arrow.png"
