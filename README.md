@@ -1,10 +1,6 @@
 # SongInfoPlus
 
-View extra song info by clicking the cover art.
-
-Preview:
-  
-  <img src="preview.jpg" alt="preview" width="900" height="420">
+View extra info about a map by clicking its cover art!
 
 ## Credits
 
