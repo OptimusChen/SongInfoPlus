@@ -15,7 +15,7 @@
 	"info": {
 		"name": "SongInfoPlus",
 		"id": "songinfoplus",
-		"version": "0.1.0",
+		"version": "3.0.0",
 		"url": null,
 		"additionalData": {
 			"overrideSoName": "libsonginfoplus.so",

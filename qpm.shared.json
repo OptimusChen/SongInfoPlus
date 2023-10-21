@@ -5,11 +5,37 @@
     "info": {
       "name": "SongInfoPlus",
       "id": "songinfoplus",
-      "version": "0.1.0",
+      "version": "3.0.0",
       "url": null,
       "additionalData": {
         "overrideSoName": "libsonginfoplus.so",
         "cmake": true
+      }
+    },
+    "workspace": {
+      "scripts": {
+        "build": [
+          "pwsh ./scripts/build.ps1"
+        ],
+        "copy": [
+          "pwsh ./scripts/copy.ps1"
+        ],
+        "logcat": [
+          "pwsh ./scripts/start-logging.ps1"
+        ],
+        "qmod": [
+          "pwsh ./scripts/build.ps1",
+          "pwsh ./scripts/createqmod.ps1"
+        ],
+        "restart": [
+          "pwsh ./scripts/restart-game.ps1"
+        ],
+        "stack": [
+          "pwsh ./scripts/ndk-stack.ps1"
+        ],
+        "tomb": [
+          "pwsh ./scripts/pull-tombstone.ps1"
+        ]
       }
     },
     "dependencies": [
@@ -47,33 +73,7 @@
         "versionRange": "^0.5.6",
         "additionalData": {}
       }
-    ],
-    "workspace": {
-      "scripts": {
-        "build": [
-          "pwsh ./scripts/build.ps1"
-        ],
-        "copy": [
-          "pwsh ./scripts/copy.ps1"
-        ],
-        "logcat": [
-          "pwsh ./scripts/start-logging.ps1"
-        ],
-        "qmod": [
-          "pwsh ./scripts/build.ps1",
-          "pwsh ./scripts/createqmod.ps1"
-        ],
-        "restart": [
-          "pwsh ./scripts/restart-game.ps1"
-        ],
-        "stack": [
-          "pwsh ./scripts/ndk-stack.ps1"
-        ],
-        "tomb": [
-          "pwsh ./scripts/pull-tombstone.ps1"
-        ]
-      }
-    }
+    ]
   },
   "restoredDependencies": [
     {
@@ -157,7 +157,6 @@
         "versionRange": "=7.78.0",
         "additionalData": {
           "staticLinking": true,
-          "useRelease": true,
           "soLink": "https://github.com/darknight1050/openssl-curl-android/releases/download/v7.78.0/libcurl.a",
           "overrideSoName": "libcurl.a",
           "branchName": "version-v7.78.0"

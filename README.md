@@ -1,9 +1,6 @@
 # SongInfoPlus
 
-a
-
-Use `qpm-rust s build` to build
-Same goes for `qpm-rust s copy` and `qpm-rust s qmod`
+View extra details about a map in Beat Saber!
 
 ## Credits
 
