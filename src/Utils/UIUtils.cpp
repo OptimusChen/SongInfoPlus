@@ -8,11 +8,8 @@
 #include "UnityEngine/Gradient.hpp"
 #include "UnityEngine/UI/LayoutElement.hpp"
 #include "beatsaber-hook/shared/utils/typedefs-array.hpp"
-#include "System/Activator.hpp"
 
 #include <iomanip>
-#include <sstream>
-#include <ctime>
 
 using namespace QuestUI;
 using namespace UnityEngine;

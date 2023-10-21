@@ -52,6 +52,9 @@ namespace SongInfoPlus {
             GlobalNamespace::IPreviewBeatmapLevel* map;
 
             void SetupMainModal();
+            void SetupDescriptionModal();
+            void SetupArtworkModal();
+
             void BeatSaverClicked();
             void HashClicked();
             void DescriptionClicked();

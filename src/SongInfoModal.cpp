@@ -65,6 +65,8 @@ namespace SongInfoPlus {
         levelHash->get_gameObject()->set_active(false);
 
         SetupMainModal();
+        SetupDescriptionModal();
+        SetupArtworkModal();
 
         initialized = true;
     }
@@ -170,6 +172,66 @@ namespace SongInfoPlus {
         percentage->set_alignment(TMPro::TextAlignmentOptions::Center);
     }
 
+    void SongInfoModal::SetupDescriptionModal() {
+        descModal = BeatSaberUI::CreateModal(horizontal->get_transform()->get_parent(), {80, 65}, Vector2::get_zero(), [=](HMUI::ModalView* desc) {
+            desc->Hide(true, nullptr);
+            modal->Show(true, true, nullptr);
+        }, true);
+
+        GameObject* scrollable = BeatSaberUI::CreateScrollableModalContainer(descModal);
+        scrollable->GetComponent<ExternalComponents*>()->Get<RectTransform*>()->set_sizeDelta({8, 1});
+
+        HorizontalLayoutGroup* horizon = BeatSaberUI::CreateHorizontalLayoutGroup(scrollable->get_transform());
+        VerticalLayoutGroup* layout = BeatSaberUI::CreateVerticalLayoutGroup(horizon->get_transform());
+
+        description = BeatSaberUI::CreateText(layout->get_transform(), "xxx", false);
+        description->set_alignment(TMPro::TextAlignmentOptions::MidlineLeft);
+        description->set_enableWordWrapping(true);
+
+        layout->set_childControlHeight(true);
+        layout->set_childForceExpandHeight(true);
+        layout->set_childControlWidth(true);
+        layout->set_childForceExpandWidth(true);
+
+        horizon->set_childControlWidth(true);
+        horizon->set_childForceExpandWidth(true);
+
+        description->get_gameObject()->AddComponent<LayoutElement*>()->set_preferredWidth(65.0f);
+
+        auto exit = BeatSaberUI::CreateUIButton(scrollable->get_transform(), "OK", "PlayButton", Vector2::get_zero(), {30, 8}, [=]() {
+            descModal->HandleBlockerButtonClicked();
+        });
+
+        UIUtils::SkewButton(exit, 0);
+    }
+
+    void SongInfoModal::SetupArtworkModal() {
+        artModal = BeatSaberUI::CreateModal(horizontal->get_transform()->get_parent(), {63, 72}, Vector2::get_zero(), [=](HMUI::ModalView* art) {
+            art->Hide(true, nullptr);
+            modal->Show(true, true, nullptr);
+        }, true);
+
+        VerticalLayoutGroup* vertical = BeatSaberUI::CreateVerticalLayoutGroup(artModal->get_transform());
+
+        SetPreferredSize(vertical, 63, 72);
+
+        vertical->set_padding(RectOffset::New_ctor(5, 5, 5, 5));
+        vertical->set_spacing(3);
+
+        artwork = BeatSaberUI::CreateImage(vertical->get_transform(), image->get_sprite(), Vector2::get_zero(), {65, 65});
+        artwork->set_preserveAspect(true);
+
+        SetPreferredSize(artwork, 65, 65);
+
+        auto exit = BeatSaberUI::CreateUIButton(vertical->get_transform(), "OK", "PlayButton", Vector2::get_zero(), {10, 2}, [=]() {
+            artModal->HandleBlockerButtonClicked();
+        });
+
+        SetPreferredSize(exit, 20, 8);
+
+        UIUtils::SkewButton(exit, 0);
+    }
+
     void SongInfoModal::RefreshModal(bool show) {
         if (!initialized) return;
 
@@ -214,6 +276,8 @@ namespace SongInfoPlus {
                 percentage->set_text(string_format("%.0f", percent) + "%");
                 percentage->set_color(UIUtils::GetColor(percent / 100));
 
+                description->set_text(beatmap.GetDescription());
+
                 loading->set_active(false);
                 horizontal->get_gameObject()->set_active(true);
             });
@@ -231,77 +295,13 @@ namespace SongInfoPlus {
     }
 
     void SongInfoModal::DescriptionClicked() {
-        auto beatmap = optionalBeatmap.value();
-
         modal->Hide(true, nullptr);
-
-        if (!descModal) {
-            descModal = BeatSaberUI::CreateModal(horizontal->get_transform()->get_parent(), {80, 65}, Vector2::get_zero(), [=](HMUI::ModalView* desc) {
-                desc->Hide(true, nullptr);
-                modal->Show(true, true, nullptr);
-            }, true);
-
-            GameObject* scrollable = BeatSaberUI::CreateScrollableModalContainer(descModal);
-            scrollable->GetComponent<ExternalComponents*>()->Get<RectTransform*>()->set_sizeDelta({8, 1});
-
-            HorizontalLayoutGroup* horizon = BeatSaberUI::CreateHorizontalLayoutGroup(scrollable->get_transform());
-            VerticalLayoutGroup* layout = BeatSaberUI::CreateVerticalLayoutGroup(horizon->get_transform());
-
-            description = BeatSaberUI::CreateText(layout->get_transform(), beatmap.GetDescription(), false);
-            description->set_alignment(TMPro::TextAlignmentOptions::MidlineLeft);
-            description->set_enableWordWrapping(true);
-
-            layout->set_childControlHeight(true);
-            layout->set_childForceExpandHeight(true);
-            layout->set_childControlWidth(true);
-            layout->set_childForceExpandWidth(true);
-
-            horizon->set_childControlWidth(true);
-            horizon->set_childForceExpandWidth(true);
-
-            description->get_gameObject()->AddComponent<LayoutElement*>()->set_preferredWidth(65.0f);
-
-            auto exit = BeatSaberUI::CreateUIButton(scrollable->get_transform(), "OK", "PlayButton", Vector2::get_zero(), {30, 8}, [=]() {
-                descModal->HandleBlockerButtonClicked();
-            });
-
-            UIUtils::SkewButton(exit, 0);
-        }
-
-        description->set_text(beatmap.GetDescription());
 
         descModal->Show(true, true, nullptr);
     }
 
     void SongInfoModal::ArtworkClicked() {
         modal->Hide(true, nullptr);
-
-        if (!artModal) {
-            artModal = BeatSaberUI::CreateModal(horizontal->get_transform()->get_parent(), {63, 72}, Vector2::get_zero(), [=](HMUI::ModalView* art) {
-                art->Hide(true, nullptr);
-                modal->Show(true, true, nullptr);
-            }, true);
-
-            VerticalLayoutGroup* vertical = BeatSaberUI::CreateVerticalLayoutGroup(artModal->get_transform());
-
-            SetPreferredSize(vertical, 63, 72);
-
-            vertical->set_padding(RectOffset::New_ctor(5, 5, 5, 5));
-            vertical->set_spacing(3);
-
-            artwork = BeatSaberUI::CreateImage(vertical->get_transform(), image->get_sprite(), Vector2::get_zero(), {65, 65});
-            artwork->set_preserveAspect(true);
-
-            SetPreferredSize(artwork, 65, 65);
-
-            auto exit = BeatSaberUI::CreateUIButton(vertical->get_transform(), "OK", "PlayButton", Vector2::get_zero(), {10, 2}, [=]() {
-                artModal->HandleBlockerButtonClicked();
-            });
-
-            SetPreferredSize(exit, 20, 8);
-
-            UIUtils::SkewButton(exit, 0);
-        }
 
         artwork->set_sprite(image->get_sprite());
 
