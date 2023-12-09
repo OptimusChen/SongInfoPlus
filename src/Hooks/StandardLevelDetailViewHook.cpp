@@ -6,6 +6,8 @@
 #include "GlobalNamespace/IPreviewBeatmapLevel.hpp"
 #include "GlobalNamespace/MenuTransitionsHelper.hpp"
 
+#include "UnityEngine/GameObject.hpp"
+
 using namespace GlobalNamespace;
 using namespace SongInfoPlus;
 
@@ -15,6 +17,14 @@ MAKE_HOOK_MATCH(StandardLevelDetailView_RefreshContent, &StandardLevelDetailView
     StandardLevelDetailView_RefreshContent(self);
 
     getLogger().info("refreshing");
+
+    if (!modal) {
+        auto view = UnityEngine::GameObject::FindObjectsOfType<StandardLevelDetailViewController*>().FirstOrDefault();
+        modal = std::make_shared<SongInfoModal>(view);
+    }
+
+    if (!modal) return;
+
     modal->Initialize(self);
 
     auto level = reinterpret_cast<IPreviewBeatmapLevel*>(self->get_selectedDifficultyBeatmap()->get_level());

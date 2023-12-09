@@ -1,3 +1,4 @@
+#include "main.hpp"
 #include "SongInfoModal.hpp"
 #include "Sprites.hpp"
 #include "include/Utils/UIUtils.hpp"
@@ -61,12 +62,10 @@ namespace SongInfoPlus {
         loading = UIUtils::CreateLoadingIndicator(modal->get_transform());
         loading->set_active(false);
 
-        levelHash = BeatSaberUI::CreateText(modal->get_transform(), "Hash: xxxx", false, {0, 0});
-        levelHash->get_gameObject()->set_active(false);
-
         SetupMainModal();
         SetupDescriptionModal();
         SetupArtworkModal();
+        SetupHashModal();
 
         initialized = true;
     }
@@ -144,7 +143,9 @@ namespace SongInfoPlus {
 
         SetPreferredSize(voting, 20, 40);
 
-        auto vote = BeatSaberUI::CreateText(voting->get_transform(), "Vote", false);
+        BeatSaberUI::AddHoverHint(voting, "Can't check for unique game installs on modded game, I blame meta.");
+
+        auto vote = BeatSaberUI::CreateClickableText(voting->get_transform(), "Vote Disabled", false);
         vote->set_fontSize(4);
         vote->set_alignment(TMPro::TextAlignmentOptions::Center);
 
@@ -232,6 +233,31 @@ namespace SongInfoPlus {
         UIUtils::SkewButton(exit, 0);
     }
 
+    void SongInfoModal::SetupHashModal() {
+        hashModal = BeatSaberUI::CreateModal(horizontal->get_transform()->get_parent(), {100, 20}, Vector2::get_zero(), [=](HMUI::ModalView* hash) {
+            hash->Hide(true, nullptr);
+            modal->Show(true, true, nullptr);
+        }, true);
+
+        VerticalLayoutGroup* vertical = BeatSaberUI::CreateVerticalLayoutGroup(hashModal->get_transform());
+
+        SetPreferredSize(vertical, 100, 20);
+
+        vertical->set_padding(RectOffset::New_ctor(2, 2, 2, 2));
+        vertical->set_spacing(3);
+
+        levelHash = BeatSaberUI::CreateText(vertical->get_transform(), "Hash: xxxx", false, {0, 0});
+        levelHash->set_alignment(TMPro::TextAlignmentOptions::Center);
+
+        auto exit = BeatSaberUI::CreateUIButton(vertical->get_transform(), "OK", "PlayButton", Vector2::get_zero(), Vector2::get_zero(), [=]() {
+            hashModal->HandleBlockerButtonClicked();
+        });
+
+        SetPreferredSize(exit, 20, 8);
+
+        UIUtils::SkewButton(exit, 0);
+    }
+
     void SongInfoModal::RefreshModal(bool show) {
         if (!initialized) return;
 
@@ -251,7 +277,8 @@ namespace SongInfoPlus {
         hash = hash->Substring(13);
 
         levelHash->set_text(string_format("Hash: %s", static_cast<std::string>(hash).c_str()));
-        levelHash->get_gameObject()->set_active(false);
+
+        getLogger().info("SongInfoMap: %s", static_cast<std::string>(hash).c_str());
 
         BeatSaver::API::GetBeatmapByHashAsync(hash, [=] (std::optional<BeatSaver::Beatmap> optionalMap) {
             if (!optionalMap.has_value()) return;
@@ -291,7 +318,9 @@ namespace SongInfoPlus {
     }
 
     void SongInfoModal::HashClicked() {
-        levelHash->get_gameObject()->set_active(true);
+        modal->Hide(true, nullptr);
+
+        hashModal->Show(true, true, nullptr);
     }
 
     void SongInfoModal::DescriptionClicked() {

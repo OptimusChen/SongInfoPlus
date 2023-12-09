@@ -8,7 +8,7 @@
 #include "GlobalNamespace/StandardLevelDetailView.hpp"
 #include "GlobalNamespace/StandardLevelDetailViewController.hpp"
 #include "songdownloader/shared/BeatSaverAPI.hpp"
-#include "questui/shared/CustomTypes/Components/ClickableImage.hpp"
+#include "questui/shared/CustomTypes/Components/ClickableText.hpp"
 #include "custom-types/shared/coroutine.hpp"
 
 namespace SongInfoPlus {
@@ -28,6 +28,7 @@ namespace SongInfoPlus {
             HMUI::ModalView* modal;
             HMUI::ModalView* artModal;
             HMUI::ModalView* descModal;
+            HMUI::ModalView* hashModal;
 
             HMUI::ImageView* image;
             HMUI::ImageView* artwork;
@@ -54,6 +55,7 @@ namespace SongInfoPlus {
             void SetupMainModal();
             void SetupDescriptionModal();
             void SetupArtworkModal();
+            void SetupHashModal();
 
             void BeatSaverClicked();
             void HashClicked();
