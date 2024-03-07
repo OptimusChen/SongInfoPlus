@@ -9,7 +9,7 @@
 #include "UnityEngine/RectOffset.hpp"
 #include "UnityEngine/Application.hpp"
 #include "GlobalNamespace/LevelBar.hpp"
-#include "GlobalNamespace/SoloFreePlayFlowCoordinator.hpp"
+#include "HMUI/FlowCoordinator.hpp"
 #include "GlobalNamespace/SharedCoroutineStarter.hpp"
 #include "UnityEngine/UI/Selectable.hpp"
 #include "UnityEngine/GameObject.hpp"
@@ -55,7 +55,7 @@ namespace SongInfoPlus {
         UIUtils::SkewButton(button, image->skew);
         UIUtils::RecolorButton(button, Color(0, 0, 0, 0), {image});
 
-        SoloFreePlayFlowCoordinator* soloFlow = ArrayUtil::First(GameObject::FindObjectsOfType<SoloFreePlayFlowCoordinator*>());
+        FlowCoordinator* soloFlow = ArrayUtil::First(GameObject::FindObjectsOfType<FlowCoordinator*>());
 
         modal = BeatSaberUI::CreateModal(soloFlow->get_topViewController()->get_transform(), {100.0f, 45.0f}, [](HMUI::ModalView* modal) {}, true);
 
